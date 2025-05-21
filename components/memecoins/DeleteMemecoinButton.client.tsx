@@ -19,10 +19,16 @@ export default function DeleteMemecoinButton({ memecoinId }: DeleteMemecoinButto
 
     setIsDeleting(true);
     try {
-      await deleteMemecoin(memecoinId);
-      toast.success('Memecoin supprimé avec succès');
-      // Use window.location.href instead of router.push for a full page refresh
-      window.location.href = '/memecoins';
+      const result = await deleteMemecoin(memecoinId);
+
+      if (result.success) {
+        toast.success('Memecoin supprimé avec succès');
+        // Use window.location.href instead of router.push for a full page refresh
+        window.location.href = '/memecoins';
+      } else {
+        toast.error(result.message || 'Une erreur est survenue lors de la suppression');
+        setIsDeleting(false);
+      }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Une erreur est survenue');
       setIsDeleting(false);

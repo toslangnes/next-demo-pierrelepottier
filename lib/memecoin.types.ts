@@ -10,6 +10,7 @@ export const memecoinSchema = z.object({
     logoUrl: z.string().url().nullable().optional(),
     supply: num.optional().default(0),
     price: num.optional().default(0),
+    reserve: num.optional().default(0),
 });
 export type Memecoin = z.infer<typeof memecoinSchema>;
 

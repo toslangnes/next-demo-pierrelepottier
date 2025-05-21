@@ -29,10 +29,15 @@ export function CreateMemecoinForm() {
             try {
                 const form = new FormData();
                 Object.entries(data).forEach(([k, v]) => v && form.append(k, v));
-                await createMemecoin(null, form);
-                toast.success('Memecoin créé!');
-                reset();
-                router.push('/memecoins');
+                const result = await createMemecoin(null, form);
+
+                if (result.success) {
+                    toast.success('Memecoin créé!');
+                    reset();
+                    router.push('/memecoins');
+                } else {
+                    toast.error(result.message || 'Une erreur est survenue lors de la création du memecoin');
+                }
             } catch (err) {
                 toast.error((err as Error).message);
             }
@@ -49,6 +54,9 @@ export function CreateMemecoinForm() {
                 </div>
             ))}
             <div className="col-span-full h-4"></div>
+            <div className="col-span-full mb-4 p-3 bg-muted rounded-md flex items-center gap-2 text-sm">
+                <span className="font-medium">Fee:</span> Creating a memecoin costs 1 ZTH
+            </div>
             <Button type="submit" disabled={isPending} className="col-span-full w-fit">Créer</Button>
         </form>
     );

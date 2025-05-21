@@ -5,7 +5,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://memecoin-explorer.vercel.app';
     const currentDate = new Date();
 
-    // Static routes with appropriate priorities and update frequencies
     const routes = [
         {
             url: baseUrl,
@@ -16,13 +15,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         {
             url: `${baseUrl}/memecoins`,
             lastModified: currentDate,
-            changeFrequency: 'hourly', // Memecoins list updates frequently
+            changeFrequency: 'hourly',
             priority: 0.9,
         },
     ] as MetadataRoute.Sitemap;
 
     try {
-        // Dynamically generate routes for each memecoin
         const memecoins = await getMemecoins();
 
         if (!memecoins || memecoins.length === 0) {
@@ -32,7 +30,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
         const memecoinRoutes = memecoins.map((coin) => ({
             url: `${baseUrl}/memecoins/${coin.id}`,
-            lastModified: currentDate, // Use current date as memecoin doesn't have timestamp fields
+            lastModified: currentDate,
             changeFrequency: 'daily',
             priority: 0.8,
         })) as MetadataRoute.Sitemap;
@@ -40,7 +38,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         return [...routes, ...memecoinRoutes];
     } catch (error) {
         console.error('Error generating sitemap:', error);
-        // Return at least the static routes if there's an error
         return routes;
     }
 }

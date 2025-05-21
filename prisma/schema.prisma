@@ -8,42 +8,42 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String    @unique
-  password      String
-  zthBalance    Float     @default(100)
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
-  memecoins     Memecoin[]
-  transactions  Transaction[]
+  id           String        @id @default(cuid())
+  name         String?
+  email        String        @unique
+  password     String
+  zthBalance   Float         @default(100)
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  memecoins    Memecoin[]
+  transactions Transaction[]
 }
 
 model Memecoin {
-  id          String   @id @default(cuid())
-  name        String
-  symbol      String
-  description String?
-  logoUrl     String?
-  supply      Float    @default(0)
-  price       Float    @default(0)
-  reserve     Float    @default(0)
-  owner       String?
-  userId      String?
-  user        User?    @relation(fields: [userId], references: [id])
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  id           String        @id @default(cuid())
+  name         String
+  symbol       String
+  description  String?
+  logoUrl      String?
+  supply       Float         @default(0)
+  price        Float         @default(0)
+  reserve      Float         @default(0)
+  owner        String?
+  userId       String?
+  user         User?         @relation(fields: [userId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
   transactions Transaction[]
 }
 
 model Transaction {
-  id          String   @id @default(cuid())
-  type        String   // "CREATE", "BUY", "SELL"
-  amount      Float    // Amount of ZTH involved
-  quantity    Float?   // Quantity of memecoins involved (for BUY/SELL)
-  userId      String
-  user        User     @relation(fields: [userId], references: [id])
-  memecoinId  String?
-  memecoin    Memecoin? @relation(fields: [memecoinId], references: [id])
-  createdAt   DateTime @default(now())
+  id         String    @id @default(cuid())
+  type       String
+  amount     Float
+  quantity   Float?
+  userId     String
+  user       User      @relation(fields: [userId], references: [id])
+  memecoinId String?
+  memecoin   Memecoin? @relation(fields: [memecoinId], references: [id])
+  createdAt  DateTime  @default(now())
 }
