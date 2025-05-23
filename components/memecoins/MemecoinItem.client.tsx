@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 export default function MemecoinItem({coin}: { coin: Memecoin }) {
 
     return (
-        <div className="w-full bg-white rounded-lg border border-gray-100 shadow-sm transition-all p-4">
+        <div className="w-full bg-white rounded-lg border border-gray-100 shadow-sm p-4">
             <div className="flex items-center gap-4">
                 {/* Left section - Logo */}
                 <div className="flex-shrink-0">
@@ -46,7 +46,7 @@ export default function MemecoinItem({coin}: { coin: Memecoin }) {
                     <div className="text-right">
                         <p className="text-lg font-bold text-indigo-600">{coin.price.toFixed(4)} ZTH</p>
                     </div>
-                    <Button asChild variant="default" className="text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 px-4 py-2 w-full shadow-md hover:shadow-lg transition-all duration-300">
+                    <Button asChild variant="default" className="text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 px-4 py-2 w-full shadow-sm">
                         <Link href={`/memecoins/${coin.id}`}>
                             <span className="flex items-center justify-center gap-2">
                                 Trade Now

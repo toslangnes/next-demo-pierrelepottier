@@ -139,8 +139,9 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
           initial="hidden"
           animate="show"
         >
-          Memecoins populaires
+          Top 3 Memecoins
         </motion.h2>
+
         <motion.div 
           className="grid sm:grid-cols-3 gap-6"
           variants={container}
@@ -153,17 +154,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
             </motion.div>
           ))}
         </motion.div>
-        <motion.div 
-          className="mt-6 text-center"
-          variants={item}
-          initial="hidden"
-          animate="show"
-          transition={{ delay: 0.6 }}
-        >
-          <Button variant="outline" asChild>
-            <Link href="/memecoins">Voir tous les memecoins</Link>
-          </Button>
-        </motion.div>
+
       </motion.section>
 
       <motion.section 
