@@ -5,7 +5,7 @@ export async function MemecoinList() {
     const coins = await getMemecoins();
 
     return (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="flex flex-col gap-3">
             {coins.map((coin) => (
                 <MemecoinItem coin={coin} key={coin.id}/>
             ))}

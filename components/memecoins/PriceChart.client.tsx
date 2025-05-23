@@ -16,7 +16,6 @@ export default function PriceChart({memecoinId}: { memecoinId: string }) {
                 setData((d) => [...d.slice(-49), {t: Date.now(), p: memecoin.price}]);
             } catch (error) {
                 console.error("Error fetching memecoin:", error);
-                // If the memecoin is not found, clear the interval to stop further requests
                 if (error instanceof Error && error.message === "NOT_FOUND" && intervalId) {
                     clearInterval(intervalId);
                     intervalId = null;

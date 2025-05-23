@@ -20,14 +20,16 @@ model User {
 }
 
 model Memecoin {
-  id           String        @id @default(cuid())
-  name         String
-  symbol       String
-  description  String?
-  logoUrl      String?
-  supply       Float         @default(0)
-  price        Float         @default(0)
-  reserve      Float         @default(0)
+  id            String        @id @default(cuid())
+  name          String
+  symbol        String
+  description   String?
+  logoUrl       String?
+  supply        Float         @default(0)
+  price         Float         @default(0)
+  reserve       Float         @default(0)
+  startingPrice Float         @default(0.1)
+  growthRate    Float         @default(0.005)
   owner        String?
   userId       String?
   user         User?         @relation(fields: [userId], references: [id])

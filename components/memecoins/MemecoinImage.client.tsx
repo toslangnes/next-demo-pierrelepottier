@@ -1,7 +1,7 @@
 'use client';
 
 import Image from "next/image";
-import { useState } from "react";
+import {useState} from "react";
 
 interface MemecoinImageProps {
     logoUrl: string | null;
@@ -9,31 +9,28 @@ interface MemecoinImageProps {
     size?: 'small' | 'medium' | 'large';
 }
 
-export default function MemecoinImage({ logoUrl, symbol, size = 'medium' }: MemecoinImageProps) {
+export default function MemecoinImage({logoUrl, symbol, size = 'medium'}: MemecoinImageProps) {
     const [hasError, setHasError] = useState(false);
-    
-    // Define sizes based on the size prop
+
     const dimensions = {
-        small: { width: 96, height: 96, textSize: 'text-2xl' },
-        medium: { width: 120, height: 120, textSize: 'text-3xl' },
-        large: { width: 150, height: 150, textSize: 'text-4xl' }
+        small: {width: 96, height: 96, textSize: 'text-2xl'},
+        medium: {width: 120, height: 120, textSize: 'text-3xl'},
+        large: {width: 150, height: 150, textSize: 'text-4xl'}
     };
-    
-    const { width, height, textSize } = dimensions[size];
-    
-    // If there's no logo URL or if there was an error loading the image, show the fallback
+
+    const {width, height, textSize} = dimensions[size];
+
     if (!logoUrl || hasError) {
         return (
-            <div 
-                className={`w-${width/4} h-${height/4} rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold ${textSize} shadow-md`}
-                style={{ width: width, height: height }}
+            <div
+                className={`w-${width / 4} h-${height / 4} rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold ${textSize} shadow-md`}
+                style={{width: width, height: height}}
             >
                 {symbol.substring(0, 2)}
             </div>
         );
     }
-    
-    // Otherwise, show the image with error handling
+
     return (
         <Image
             src={logoUrl}

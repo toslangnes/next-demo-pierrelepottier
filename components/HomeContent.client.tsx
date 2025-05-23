@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Memecoin } from '@/lib/memecoin.types';
-import MemecoinItem from '@/components/memecoins/MemecoinItem.client';
+import SimpleMemecoinItem from '@/components/memecoins/SimpleMemecoinItem.client';
 
 const container = {
   hidden: { opacity: 0 },
@@ -23,7 +23,7 @@ const item = {
 
 export default function HomeContent({ memecoins, isLoggedIn = false, userName = "" }: { memecoins: Memecoin[], isLoggedIn?: boolean, userName?: string }) {
   return (
-    <div className="flex flex-col gap-8">
+    <div className="flex flex-col gap-10 max-w-6xl mx-auto px-4">
       <motion.section 
         className="py-16 text-center max-w-3xl mx-auto"
         initial={{ opacity: 0, y: 30 }}
@@ -31,7 +31,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
         transition={{ duration: 0.6 }}
       >
         <motion.h1 
-          className="text-5xl font-bold mb-6 bg-gradient-to-r from-purple-600 to-blue-500 bg-clip-text text-transparent"
+          className="text-5xl font-bold mb-6 bg-gradient-to-r from-indigo-500 to-cyan-500 bg-clip-text text-transparent"
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.2 }}
@@ -52,15 +52,21 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <Button asChild size="lg" className="rounded-full px-8 py-6 text-lg shadow-lg hover:shadow-xl transition-all">
-            <Link href="/memecoins">Explorer les Memecoins</Link>
+          <Button asChild size="lg" className="rounded-full px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-cyan-500 border-0 shadow-lg transition-transform hover:from-indigo-700 hover:to-cyan-600">
+            <Link href="/memecoins" className="flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              Explorer les Memecoins
+            </Link>
           </Button>
         </motion.div>
       </motion.section>
 
       {isLoggedIn && (
         <motion.section 
-          className="py-8 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg p-6 shadow-md"
+          className="py-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.7 }}
@@ -73,7 +79,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
           >
             <div>
               <motion.h2 
-                className="text-2xl font-bold mb-2"
+                className="text-2xl font-bold mb-2 pb-2 border-b border-indigo-200 inline-block"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3, delay: 1.1 }}
@@ -128,7 +134,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
         transition={{ duration: 0.5, delay: 0.8 }}
       >
         <motion.h2 
-          className="text-2xl font-bold mb-6"
+          className="text-2xl font-bold mb-6 pb-2 border-b border-indigo-200 inline-block"
           variants={item}
           initial="hidden"
           animate="show"
@@ -143,7 +149,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
         >
           {memecoins.map(coin => (
             <motion.div key={coin.id} variants={item}>
-              <MemecoinItem coin={coin} />
+              <SimpleMemecoinItem coin={coin} />
             </motion.div>
           ))}
         </motion.div>
@@ -161,13 +167,13 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
       </motion.section>
 
       <motion.section 
-        className="py-8 bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-6 shadow-sm"
+        className="py-8"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 1 }}
       >
         <motion.h2 
-          className="text-2xl font-bold mb-4"
+          className="text-2xl font-bold mb-4 pb-2 border-b border-indigo-200 inline-block"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5, delay: 1.2 }}
@@ -197,13 +203,13 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
 
       {!isLoggedIn && (
         <motion.section 
-          className="py-8 bg-gradient-to-br from-purple-100 to-blue-100 rounded-lg p-6 shadow-sm"
+          className="py-8"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 1.8 }}
         >
           <motion.h2 
-            className="text-2xl font-bold mb-4"
+            className="text-2xl font-bold mb-4 pb-2 border-b border-indigo-200 inline-block"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 2 }}
@@ -218,17 +224,12 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
           >
             Rejoignez notre communauté et découvrez le monde fascinant des memecoins. Créez votre compte pour commencer à trader et suivre vos memecoins préférés.
           </motion.p>
-          <motion.div 
-            className="flex flex-wrap justify-center"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 2.4 }}
-          >
+          <div className="flex flex-wrap justify-center">
             <div>
               <Button 
                 asChild 
                 size="lg"
-                className="rounded-full px-8 py-6 text-lg bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 border-0 shadow-lg"
+                className="rounded-full px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-cyan-500 border-0 shadow-lg transition-none hover:bg-gradient-to-r hover:from-indigo-700 hover:to-cyan-600"
               >
                 <Link href="/register" className="flex items-center gap-2">
                   <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -241,7 +242,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
                 </Link>
               </Button>
             </div>
-          </motion.div>
+          </div>
         </motion.section>
       )}
     </div>

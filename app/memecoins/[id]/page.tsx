@@ -1,16 +1,11 @@
 import {getMemecoin} from "@/lib/memecoin.actions";
 import {notFound} from "next/navigation";
 import type {Metadata} from "next";
-import DeleteMemecoinButton from "@/components/memecoins/DeleteMemecoinButton.client";
-import {TradingInterface} from "@/components/memecoins/TradingInterface";
-import {BondingCurveChart} from "@/components/memecoins/BondingCurveChart";
+import MemecoinTrading from "@/components/memecoins/MemecoinTrading.client";
 import MemecoinImage from "@/components/memecoins/MemecoinImage.client";
 import {auth} from "@/app/auth";
 import {prisma} from "@/lib/prisma";
 import {Separator} from "@/components/ui/separator";
-import {Button} from "@/components/ui/button";
-import Link from "next/link";
-import {LogIn} from "lucide-react";
 
 type PageProps = {
     params: Promise<{ id: string }>;
@@ -44,15 +39,32 @@ export default async function MemecoinDetails({params}: PageProps) {
         return notFound();
     }
 
-    // Get user's ZTH balance if logged in
     let userBalance = 0;
+    let userHoldings = 0;
+
     if (session?.user?.id) {
         const user = await prisma.user.findUnique({
-            where: { id: session.user.id },
-            select: { zthBalance: true }
+            where: {id: session.user.id},
+            select: {zthBalance: true}
         });
+
         if (user) {
             userBalance = user.zthBalance;
+        }
+
+        const userTransactions = await prisma.transaction.findMany({
+            where: {
+                userId: session.user.id,
+                memecoinId: id
+            }
+        });
+
+        for (const tx of userTransactions) {
+            if (tx.type === "BUY" && tx.quantity) {
+                userHoldings += tx.quantity;
+            } else if (tx.type === "SELL" && tx.quantity) {
+                userHoldings -= tx.quantity;
+            }
         }
     }
 
@@ -61,47 +73,51 @@ export default async function MemecoinDetails({params}: PageProps) {
             <article className="prose max-w-none">
                 <header className="flex items-center justify-between mb-4">
                     <div className="flex items-center gap-4">
-                        <MemecoinImage 
-                            logoUrl={coin.logoUrl} 
-                            symbol={coin.symbol} 
-                            size="medium" 
+                        <MemecoinImage
+                            logoUrl={coin.logoUrl ?? null}
+                            symbol={coin.symbol}
+                            size="medium"
                         />
                         <div>
                             <h1 className="mb-0 text-3xl">{coin.name}</h1>
                             <span className="text-lg bg-muted px-2 py-0.5 rounded-md">({coin.symbol})</span>
                         </div>
                     </div>
-                    {session?.user?.id === coin.userId && (
-                        <DeleteMemecoinButton memecoinId={coin.id}/>
-                    )}
                 </header>
                 {coin.description && <p>{coin.description}</p>}
-                <p>
-                    Prix actuel : <strong>{coin.price.toFixed(4)} ZTH</strong>
-                </p>
-                <p>
-                    Supply : <strong>{coin.supply.toLocaleString()} tokens</strong>
-                </p>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4">
+                    <div>
+                        <h3 className="text-lg font-medium">Trading Info</h3>
+                        <p>
+                            Current Price: <strong>{coin.price.toFixed(4)} ZTH</strong>
+                        </p>
+                        <p>
+                            Supply: <strong>{coin.supply.toLocaleString()} tokens</strong>
+                        </p>
+                    </div>
+                    <div>
+                        <h3 className="text-lg font-medium">Bonding Curve Parameters</h3>
+                        <p>
+                            Base Price: <strong>{coin.startingPrice.toFixed(4)} ZTH</strong>
+                        </p>
+                        <p>
+                            Growth Factor: <strong>{(coin.growthRate * 100).toFixed(2)}%</strong> per token
+                        </p>
+                        <p className="text-sm text-muted-foreground mt-1">
+                            Formula: P = {coin.startingPrice.toFixed(4)} × e<sup>{coin.growthRate.toFixed(4)} × S</sup>
+                        </p>
+                    </div>
+                </div>
             </article>
 
-            <Separator />
+            <Separator/>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <BondingCurveChart currentSupply={coin.supply} />
-                {session?.user ? (
-                    <TradingInterface memecoin={coin} userBalance={userBalance} />
-                ) : (
-                    <div className="text-center p-6 bg-muted rounded-lg flex flex-col items-center justify-center gap-4">
-                        <p className="text-lg">Login to buy or sell {coin.symbol} tokens</p>
-                        <Button asChild className="flex items-center gap-2">
-                            <Link href="/login">
-                                <LogIn className="h-4 w-4" />
-                                Login
-                            </Link>
-                        </Button>
-                    </div>
-                )}
-            </div>
+            <MemecoinTrading
+                memecoin={coin}
+                userBalance={userBalance}
+                userHoldings={userHoldings}
+                isLoggedIn={!!session?.user}
+            />
         </div>
     );
 }

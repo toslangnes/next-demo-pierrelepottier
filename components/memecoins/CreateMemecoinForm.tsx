@@ -10,6 +10,7 @@ import {useTransition} from 'react';
 import {useRouter} from 'next/navigation';
 import {createMemecoin} from "@/lib/memecoin.actions";
 import {z} from 'zod';
+import {BondingCurveChart} from '@/components/memecoins/BondingCurveChart';
 
 export function CreateMemecoinForm() {
     const router = useRouter();
@@ -20,9 +21,17 @@ export function CreateMemecoinForm() {
         handleSubmit,
         formState: {errors},
         reset,
+        watch,
     } = useForm<z.infer<typeof createMemecoinSchema>>({
         resolver: zodResolver(createMemecoinSchema),
+        defaultValues: {
+            startingPrice: 0.1,
+            growthRate: 0.005,
+        }
     });
+
+    const watchStartingPrice = watch("startingPrice") || 0.1;
+    const watchGrowthRate = watch("growthRate") || 0.005;
 
     async function onSubmit(data: z.infer<typeof createMemecoinSchema>) {
         startTransition(async () => {
@@ -53,6 +62,62 @@ export function CreateMemecoinForm() {
                     {errors[field] && <p className="text-xs text-destructive">{errors[field]?.message as string}</p>}
                 </div>
             ))}
+
+            <div className="col-span-full">
+                <h3 className="text-lg font-medium mb-4">Bonding Curve Parameters</h3>
+
+                <div className="grid sm:grid-cols-2 gap-6">
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <Label htmlFor="startingPrice">Starting Price (ZTH)</Label>
+                            <span className="text-sm font-medium">{watchStartingPrice.toFixed(2)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            id="startingPrice"
+                            min="0.01"
+                            max="1"
+                            step="0.01"
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            {...register("startingPrice", {valueAsNumber: true})}
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>0.01</span>
+                            <span>1.00</span>
+                        </div>
+                    </div>
+
+                    <div className="space-y-2">
+                        <div className="flex justify-between">
+                            <Label htmlFor="growthRate">Growth Rate</Label>
+                            <span className="text-sm font-medium">{watchGrowthRate.toFixed(4)}</span>
+                        </div>
+                        <input
+                            type="range"
+                            id="growthRate"
+                            min="0.0001"
+                            max="0.01"
+                            step="0.0001"
+                            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
+                            {...register("growthRate", {valueAsNumber: true})}
+                        />
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                            <span>Gentle</span>
+                            <span>Aggressive</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="mt-6">
+                    <BondingCurveChart
+                        currentSupply={0}
+                        startingPrice={watchStartingPrice}
+                        growthRate={watchGrowthRate}
+                        previewMode={true}
+                    />
+                </div>
+            </div>
+
             <div className="col-span-full h-4"></div>
             <div className="col-span-full mb-4 p-3 bg-muted rounded-md flex items-center gap-2 text-sm">
                 <span className="font-medium">Fee:</span> Creating a memecoin costs 1 ZTH

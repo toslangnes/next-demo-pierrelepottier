@@ -1,7 +1,7 @@
 import {z} from "zod";
 
-export const SLOPE = 0.00001;
-export const STARTING_PRICE = 0.001;
+export const GROWTH_RATE = 0.005;
+export const STARTING_PRICE = 0.1;
 
 export const tradeSchema = z.object({
     memecoinId: z.string(),
@@ -12,16 +12,19 @@ export type TradePayload = z.infer<typeof tradeSchema>;
 export type TradeResponse = {
     success: boolean;
     message: string;
+    userHoldings?: number;
+    cost?: number;
+    proceeds?: number;
 };
 
-export function calculatePrice(supply: number): number {
-    return SLOPE * supply + STARTING_PRICE;
+export function calculatePrice(supply: number, startingPrice = STARTING_PRICE, growthRate = GROWTH_RATE): number {
+    return startingPrice * Math.exp(growthRate * supply);
 }
 
-export function calculateBuyCost(supply: number, amount: number): number {
-    return SLOPE * ((amount + supply) ** 2 - supply ** 2) / 2 + amount * STARTING_PRICE;
+export function calculateBuyCost(supply: number, amount: number, startingPrice = STARTING_PRICE, growthRate = GROWTH_RATE): number {
+    return (startingPrice / growthRate) * (Math.exp(growthRate * (supply + amount)) - Math.exp(growthRate * supply));
 }
 
-export function calculateSellProceeds(supply: number, amount: number): number {
-    return SLOPE * (supply ** 2 - (supply - amount) ** 2) / 2 + amount * STARTING_PRICE;
+export function calculateSellProceeds(supply: number, amount: number, startingPrice = STARTING_PRICE, growthRate = GROWTH_RATE): number {
+    return (startingPrice / growthRate) * (Math.exp(growthRate * supply) - Math.exp(growthRate * (supply - amount)));
 }

@@ -8,5 +8,5 @@ export default async function Home() {
     const isLoggedIn = !!session?.user;
     const userName = session?.user?.name || '';
 
-    return <HomeContent memecoins={memecoins} isLoggedIn={isLoggedIn} userName={userName} />;
+    return <HomeContent memecoins={memecoins} isLoggedIn={isLoggedIn} userName={userName}/>;
 }

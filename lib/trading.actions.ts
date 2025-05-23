@@ -11,8 +11,6 @@ import {
     tradeSchema,
     TradeResponse
 } from "@/lib/trading.types";
-import {User} from "@/lib/user.types";
-import {Memecoin} from "@/lib/memecoin.types";
 
 export async function buyMemecoin(
     _prev: unknown,
@@ -24,6 +22,8 @@ export async function buyMemecoin(
             return {success: false, message: "You must be logged in to buy memecoins"};
         }
 
+        const userId = session.user.id;
+
         const payload = tradeSchema.parse({
             memecoinId: formData.get("memecoinId"),
             amount: Number(formData.get("amount"))
@@ -31,50 +31,63 @@ export async function buyMemecoin(
 
         const {memecoinId, amount} = payload;
 
-        const memecoin = await prisma.memecoin.findUnique({
-            where: {id: memecoinId}
-        }) as Memecoin;
+        const result = await prisma.$transaction(async (tx) => {
+            const memecoin = await tx.memecoin.findUnique({
+                where: {id: memecoinId}
+            });
 
-        if (!memecoin) {
-            return {success: false, message: "Memecoin not found"};
-        }
+            if (!memecoin) {
+                return {success: false, message: "Memecoin not found"};
+            }
 
-        const user = await prisma.user.findUnique({
-            where: {id: session.user.id}
-        }) as User;
+            const user = await tx.user.findUnique({
+                where: {id: userId}
+            });
 
-        if (!user) {
-            return {success: false, message: "User not found"};
-        }
+            if (!user) {
+                return {success: false, message: "User not found"};
+            }
 
-        const cost = calculateBuyCost(memecoin.supply, amount);
+            const cost = calculateBuyCost(memecoin.supply, amount, memecoin.startingPrice, memecoin.growthRate);
 
-        if (user.zthBalance < cost) {
-            return {success: false, message: "Insufficient ZTH balance"};
-        }
+            if (user.zthBalance < cost) {
+                return {success: false, message: "Insufficient ZTH balance"};
+            }
 
-        // Update user balance, memecoin supply, price, and reserve
-        const newSupply = memecoin.supply + amount;
-        const newPrice = calculatePrice(newSupply);
+            const userTransactions = await tx.transaction.findMany({
+                where: {
+                    userId: userId,
+                    memecoinId: memecoinId
+                }
+            });
 
-        // Execute transaction in a Prisma transaction
-        await prisma.$transaction([
-            // Update user balance
-            prisma.user.update({
+            let userHoldings = 0;
+            for (const txn of userTransactions) {
+                if (txn.type === "BUY" && txn.quantity) {
+                    userHoldings += txn.quantity;
+                } else if (txn.type === "SELL" && txn.quantity) {
+                    userHoldings -= txn.quantity;
+                }
+            }
+
+            const newSupply = memecoin.supply + amount;
+            const newPrice = calculatePrice(newSupply, memecoin.startingPrice, memecoin.growthRate);
+
+            await tx.user.update({
                 where: {id: user.id},
                 data: {zthBalance: user.zthBalance - cost}
-            }),
-            // Update memecoin
-            prisma.memecoin.update({
+            });
+
+            await tx.memecoin.update({
                 where: {id: memecoinId},
                 data: {
                     supply: newSupply,
                     price: newPrice,
                     reserve: memecoin.reserve + cost
                 }
-            }),
-            // Create transaction record
-            prisma.transaction.create({
+            });
+
+            await tx.transaction.create({
                 data: {
                     type: "BUY",
                     amount: cost,
@@ -82,12 +95,23 @@ export async function buyMemecoin(
                     userId: user.id,
                     memecoinId: memecoinId
                 }
-            })
-        ]);
+            });
+
+            return {
+                success: true,
+                message: `Successfully bought ${amount} tokens for ${cost.toFixed(4)} ZTH`,
+                userHoldings: userHoldings + amount,
+                cost
+            };
+        });
+
+        if (!result.success) {
+            return result;
+        }
 
         revalidatePath(`/memecoins/${memecoinId}`);
         revalidatePath('/portfolio');
-        return {success: true, message: `Successfully bought ${amount} tokens for ${cost.toFixed(4)} ZTH`};
+        return result;
     } catch (error) {
         console.error("Error buying memecoin:", error);
         if (error instanceof z.ZodError) {
@@ -97,7 +121,6 @@ export async function buyMemecoin(
     }
 }
 
-// Sell memecoin tokens
 export async function sellMemecoin(
     _prev: unknown,
     formData: FormData
@@ -108,6 +131,8 @@ export async function sellMemecoin(
             return {success: false, message: "You must be logged in to sell memecoins"};
         }
 
+        const userId = session.user.id;
+
         const payload = tradeSchema.parse({
             memecoinId: formData.get("memecoinId"),
             amount: Number(formData.get("amount"))
@@ -115,59 +140,71 @@ export async function sellMemecoin(
 
         const {memecoinId, amount} = payload;
 
-        // Get the memecoin
-        const memecoin = await prisma.memecoin.findUnique({
-            where: {id: memecoinId}
-        }) as Memecoin;
+        const result = await prisma.$transaction(async (tx) => {
+            const memecoin = await tx.memecoin.findUnique({
+                where: {id: memecoinId}
+            });
 
-        if (!memecoin) {
-            return {success: false, message: "Memecoin not found"};
-        }
+            if (!memecoin) {
+                return {success: false, message: "Memecoin not found"};
+            }
 
-        // Check if there's enough supply to sell
-        if (memecoin.supply < amount) {
-            return {success: false, message: "Not enough tokens in circulation"};
-        }
+            if (memecoin.supply < amount) {
+                return {success: false, message: "Not enough tokens in circulation"};
+            }
 
-        // Calculate proceeds
-        const proceeds = calculateSellProceeds(memecoin.supply, amount);
+            const user = await tx.user.findUnique({
+                where: {id: userId}
+            });
 
-        // Check if reserve has enough ZTH
-        if (memecoin.reserve < proceeds) {
-            return {success: false, message: "Insufficient reserve in the liquidity pool"};
-        }
+            if (!user) {
+                return {success: false, message: "User not found"};
+            }
 
-        // Get the user
-        const user = await prisma.user.findUnique({
-            where: {id: session.user.id}
-        }) as User;
+            const userTransactions = await tx.transaction.findMany({
+                where: {
+                    userId: userId,
+                    memecoinId: memecoinId
+                }
+            });
 
-        if (!user) {
-            return {success: false, message: "User not found"};
-        }
+            let userHoldings = 0;
+            for (const txn of userTransactions) {
+                if (txn.type === "BUY" && txn.quantity) {
+                    userHoldings += txn.quantity;
+                } else if (txn.type === "SELL" && txn.quantity) {
+                    userHoldings -= txn.quantity;
+                }
+            }
 
-        // Update user balance, memecoin supply, price, and reserve
-        const newSupply = memecoin.supply - amount;
-        const newPrice = calculatePrice(newSupply);
+            if (userHoldings < amount) {
+                return {success: false, message: `You only own ${userHoldings} tokens of this memecoin`};
+            }
 
-        // Execute transaction in a Prisma transaction
-        await prisma.$transaction([
-            // Update user balance
-            prisma.user.update({
+            const proceeds = calculateSellProceeds(memecoin.supply, amount, memecoin.startingPrice, memecoin.growthRate);
+
+            if (memecoin.reserve < proceeds) {
+                return {success: false, message: "Insufficient reserve in the liquidity pool"};
+            }
+
+            const newSupply = memecoin.supply - amount;
+            const newPrice = calculatePrice(newSupply, memecoin.startingPrice, memecoin.growthRate);
+
+            await tx.user.update({
                 where: {id: user.id},
                 data: {zthBalance: user.zthBalance + proceeds}
-            }),
-            // Update memecoin
-            prisma.memecoin.update({
+            });
+
+            await tx.memecoin.update({
                 where: {id: memecoinId},
                 data: {
                     supply: newSupply,
                     price: newPrice,
                     reserve: memecoin.reserve - proceeds
                 }
-            }),
-            // Create transaction record
-            prisma.transaction.create({
+            });
+
+            await tx.transaction.create({
                 data: {
                     type: "SELL",
                     amount: proceeds,
@@ -175,12 +212,23 @@ export async function sellMemecoin(
                     userId: user.id,
                     memecoinId: memecoinId
                 }
-            })
-        ]);
+            });
+
+            return {
+                success: true,
+                message: `Successfully sold ${amount} tokens for ${proceeds.toFixed(4)} ZTH`,
+                userHoldings: userHoldings - amount,
+                proceeds
+            };
+        });
+
+        if (!result.success) {
+            return result;
+        }
 
         revalidatePath(`/memecoins/${memecoinId}`);
         revalidatePath('/portfolio');
-        return {success: true, message: `Successfully sold ${amount} tokens for ${proceeds.toFixed(4)} ZTH`};
+        return result;
     } catch (error) {
         console.error("Error selling memecoin:", error);
         if (error instanceof z.ZodError) {

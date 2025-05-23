@@ -1,43 +1,61 @@
 'use client';
-import { Memecoin } from "@/lib/memecoin.types";
-import {Card} from '@/components/ui/card';
+import {Memecoin} from "@/lib/memecoin.types";
 import Link from 'next/link';
-import { motion } from 'framer-motion';
 import MemecoinImage from './MemecoinImage.client';
+import { ArrowUpRight, TrendingUp, Coins } from 'lucide-react';
+import { Button } from "@/components/ui/button";
 
 export default function MemecoinItem({coin}: { coin: Memecoin }) {
+
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.3 }}
-            whileHover={{ scale: 1.03 }}
-            whileTap={{ scale: 0.98 }}
-        >
-            <Link href={`/memecoins/${coin.id}`}>
-                <Card className="p-4 flex flex-col gap-2 hover:shadow-md transition-all h-full">
-                    <div className="flex items-center gap-3 mb-2">
-                        <motion.div whileHover={{ rotate: 10 }}>
-                            <MemecoinImage 
-                                logoUrl={coin.logoUrl} 
-                                symbol={coin.symbol} 
-                                size="small" 
-                            />
-                        </motion.div>
-                        <div>
-                            <h3 className="font-medium line-clamp-1 text-lg">{coin.name}</h3>
-                            <span className="text-xs bg-muted px-2 py-0.5 rounded">{coin.symbol}</span>
+        <div className="w-full bg-white rounded-lg border border-gray-100 shadow-sm transition-all p-4">
+            <div className="flex items-center gap-4">
+                {/* Left section - Logo */}
+                <div className="flex-shrink-0">
+                    <MemecoinImage
+                        logoUrl={coin.logoUrl}
+                        symbol={coin.symbol}
+                        size="small"
+                    />
+                </div>
+
+                {/* Middle section - Name and basic info */}
+                <div className="flex-grow min-w-0">
+                    <div className="flex items-center gap-2">
+                        <Link href={`/memecoins/${coin.id}`} className="hover:underline">
+                            <h3 className="font-medium text-lg truncate">{coin.name}</h3>
+                        </Link>
+                        <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">{coin.symbol}</span>
+                    </div>
+
+                    {/* Simplified stats - just 2 key metrics */}
+                    <div className="flex gap-4 mt-2">
+                        <div className="flex items-center gap-1">
+                            <Coins className="h-4 w-4 text-indigo-500" />
+                            <span className="text-sm">Supply: {coin.supply.toLocaleString()}</span>
+                        </div>
+                        <div className="flex items-center gap-1">
+                            <TrendingUp className="h-4 w-4 text-indigo-500" />
+                            <span className="text-sm">Growth: {(coin.growthRate * 100).toFixed(2)}%</span>
                         </div>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-3">{coin.description}</p>
-                    <motion.p 
-                        className="mt-auto text-sm font-semibold"
-                        whileHover={{ scale: 1.05 }}
-                    >
-                        💰 {coin.price.toFixed(4)} ZTH
-                    </motion.p>
-                </Card>
-            </Link>
-        </motion.div>
+                </div>
+
+                {/* Right section - Price and action */}
+                <div className="flex flex-col items-end gap-3 flex-shrink-0">
+                    <div className="text-right">
+                        <p className="text-lg font-bold text-indigo-600">{coin.price.toFixed(4)} ZTH</p>
+                    </div>
+                    <Button asChild variant="default" className="text-white bg-gradient-to-r from-purple-600 to-blue-500 hover:from-purple-700 hover:to-blue-600 px-4 py-2 w-full shadow-md hover:shadow-lg transition-all duration-300">
+                        <Link href={`/memecoins/${coin.id}`}>
+                            <span className="flex items-center justify-center gap-2">
+                                Trade Now
+                                <ArrowUpRight className="h-4 w-4" />
+                            </span>
+                        </Link>
+                    </Button>
+                </div>
+            </div>
+        </div>
     );
 }
