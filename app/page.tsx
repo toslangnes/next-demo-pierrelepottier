@@ -1,4 +1,4 @@
-import {getMemecoins} from '@/lib/memecoin.actions';
+import {getMemecoins} from '@/lib/actions/memecoin.actions';
 import HomeContent from '@/components/HomeContent.client';
 import {auth} from '@/app/auth';
 

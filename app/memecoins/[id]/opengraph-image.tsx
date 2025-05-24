@@ -1,5 +1,5 @@
 import {ImageResponse} from 'next/og';
-import {getMemecoin} from "@/lib/memecoin.actions";
+import {getMemecoin} from "@/lib/actions/memecoin.actions";
 
 export const size = {width: 1200, height: 630} as const;
 export const contentType = 'image/png';

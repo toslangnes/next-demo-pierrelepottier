@@ -1,4 +1,4 @@
-import {getMemecoins} from "@/lib/memecoin.actions";
+import {getMemecoins} from "@/lib/actions/memecoin.actions";
 import MemecoinItem from "@/components/memecoins/MemecoinItem.client";
 
 export async function MemecoinList({ searchQuery }: { searchQuery?: string }) {

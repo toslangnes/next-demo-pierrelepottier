@@ -1,5 +1,5 @@
 'use client';
-import {createMemecoinSchema} from "@/lib/memecoin.types";
+import {createMemecoinSchema} from "@/lib/types/memecoin.types";
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {Button} from '@/components/ui/button';
@@ -8,7 +8,7 @@ import {Label} from '@/components/ui/label';
 import {toast} from 'sonner';
 import {useTransition} from 'react';
 import {useRouter} from 'next/navigation';
-import {createMemecoin} from "@/lib/memecoin.actions";
+import {createMemecoin} from "@/lib/actions/memecoin.actions";
 import {z} from 'zod';
 import {BondingCurveChart} from '@/components/memecoins/BondingCurveChart';
 

@@ -3,7 +3,7 @@
 import {useEffect, useRef, useState} from 'react';
 import {motion} from 'framer-motion';
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from '@/components/ui/card';
-import {STARTING_PRICE, GROWTH_RATE} from '@/lib/trading.types';
+import {STARTING_PRICE, GROWTH_RATE} from '@/lib/types/trading.types';
 
 function calculateCustomPrice(supply: number, startingPrice: number, growthRate: number): number {
     return startingPrice * Math.exp(growthRate * supply);

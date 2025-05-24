@@ -1,5 +1,5 @@
 import {MetadataRoute} from 'next';
-import {getMemecoins} from '@/lib/memecoin.actions';
+import {getMemecoins} from '@/lib/actions/memecoin.actions';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const baseUrl = 'https://memecoin-explorer.vercel.app';

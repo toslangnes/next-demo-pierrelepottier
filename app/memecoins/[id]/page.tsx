@@ -1,4 +1,4 @@
-import {getMemecoin} from "@/lib/memecoin.actions";
+import {getMemecoin} from "@/lib/actions/memecoin.actions";
 import {notFound} from "next/navigation";
 import type {Metadata} from "next";
 import MemecoinTrading from "@/components/memecoins/MemecoinTrading.client";

@@ -9,9 +9,9 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Tabs, TabsContent, TabsList, TabsTrigger} from '@/components/ui/tabs';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
-import {buyMemecoin, sellMemecoin} from '@/lib/trading.actions';
-import {calculateBuyCost, calculateSellProceeds, calculatePrice} from '@/lib/trading.types';
-import {Memecoin} from '@/lib/memecoin.types';
+import {buyMemecoin, sellMemecoin} from '@/lib/actions/trading.actions';
+import {calculateBuyCost, calculateSellProceeds, calculatePrice} from '@/lib/types/trading.types';
+import {Memecoin} from '@/lib/types/memecoin.types';
 
 interface TradingInterfaceProps {
     memecoin: Memecoin;

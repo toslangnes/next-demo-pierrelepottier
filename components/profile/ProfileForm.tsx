@@ -8,10 +8,10 @@ import {Input} from '@/components/ui/input';
 import {Label} from '@/components/ui/label';
 import {Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle} from '@/components/ui/card';
 import {toast} from 'sonner';
-import {updateProfile} from '@/lib/user.actions';
-import {updateProfileSchema} from '@/lib/user.types';
+import {updateProfile} from '@/lib/actions/user.actions';
+import {updateProfileSchema} from '@/lib/types/user.types';
 import {z} from 'zod';
-import {User} from '@/lib/user.types';
+import {User} from '@/lib/types/user.types';
 import {AlertCircle, User as UserIcon, Mail, KeyRound} from 'lucide-react';
 
 type ProfileFormProps = {

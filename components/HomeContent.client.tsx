@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Memecoin } from '@/lib/memecoin.types';
+import { Memecoin } from '@/lib/types/memecoin.types';
 import SimpleMemecoinItem from '@/components/memecoins/SimpleMemecoinItem.client';
 
 const container = {

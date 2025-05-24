@@ -1,7 +1,7 @@
 'use client';
 import {useEffect, useState} from 'react';
 import {LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer} from 'recharts';
-import {getMemecoin} from "@/lib/memecoin.actions";
+import {getMemecoin} from "@/lib/actions/memecoin.actions";
 
 type Point = { t: number; p: number };
 

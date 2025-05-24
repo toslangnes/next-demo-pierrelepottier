@@ -5,7 +5,7 @@ import {prisma} from "@/lib/prisma";
 import {auth} from "@/app/auth";
 import {z} from "zod";
 import * as bcrypt from 'bcryptjs';
-import {updateProfileSchema} from "@/lib/user.types";
+import {updateProfileSchema} from "@/lib/types/user.types";
 
 export async function updateProfile(
     _prev: unknown,

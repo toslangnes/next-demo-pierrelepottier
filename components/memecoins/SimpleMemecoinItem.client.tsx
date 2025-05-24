@@ -1,5 +1,5 @@
 'use client';
-import {Memecoin} from "@/lib/memecoin.types";
+import {Memecoin} from "@/lib/types/memecoin.types";
 import Link from 'next/link';
 import MemecoinImage from './MemecoinImage.client';
 import { ArrowUpRight } from 'lucide-react';

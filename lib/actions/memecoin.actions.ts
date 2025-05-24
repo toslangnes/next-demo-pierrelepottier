@@ -3,7 +3,7 @@
 import {cache} from "react";
 import {revalidatePath} from "next/cache";
 import {z} from "zod";
-import {createMemecoinSchema, Memecoin} from "@/lib/memecoin.types";
+import {createMemecoinSchema, Memecoin} from "@/lib/types/memecoin.types";
 import {prisma} from "@/lib/prisma";
 import "server-only";
 import {auth} from "@/app/auth";

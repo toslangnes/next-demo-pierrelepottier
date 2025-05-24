@@ -10,7 +10,7 @@ import {
     calculateSellProceeds,
     tradeSchema,
     TradeResponse
-} from "@/lib/trading.types";
+} from "@/lib/types/trading.types";
 
 export async function buyMemecoin(
     _prev: unknown,
