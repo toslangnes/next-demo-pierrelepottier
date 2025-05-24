@@ -217,10 +217,7 @@ export function TradingInterface({memecoin, userBalance, userHoldings = 0, onTra
                                     balance: {userBalance.toFixed(4)} ZTH</p>
                             </motion.div>
 
-                            <motion.div
-                                whileHover={{scale: 1.02}}
-                                whileTap={{scale: 0.98}}
-                            >
+                            <div>
                                 <Button
                                     onClick={handleBuy}
                                     disabled={isPending || buyCost > userBalance || buyAmount <= 0}
@@ -228,7 +225,7 @@ export function TradingInterface({memecoin, userBalance, userHoldings = 0, onTra
                                 >
                                     {isPending ? 'Processing...' : 'Buy Tokens'}
                                 </Button>
-                            </motion.div>
+                            </div>
                         </TabsContent>
 
                         <TabsContent value="sell" className="space-y-4">
@@ -271,10 +268,7 @@ export function TradingInterface({memecoin, userBalance, userHoldings = 0, onTra
                                 </p>
                             </motion.div>
 
-                            <motion.div
-                                whileHover={{scale: 1.02}}
-                                whileTap={{scale: 0.98}}
-                            >
+                            <div>
                                 <Button
                                     onClick={handleSell}
                                     disabled={isPending || sellAmount > memecoin.supply || sellAmount <= 0}
@@ -282,7 +276,7 @@ export function TradingInterface({memecoin, userBalance, userHoldings = 0, onTra
                                 >
                                     {isPending ? 'Processing...' : 'Sell Tokens'}
                                 </Button>
-                            </motion.div>
+                            </div>
                         </TabsContent>
                     </Tabs>
                 </CardContent>

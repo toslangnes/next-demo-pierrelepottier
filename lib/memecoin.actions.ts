@@ -8,9 +8,22 @@ import {prisma} from "@/lib/prisma";
 import "server-only";
 import {auth} from "@/app/auth";
 
-export const getMemecoins = cache(async (): Promise<Memecoin[]> => {
+export const getMemecoins = cache(async (searchTerm?: string): Promise<Memecoin[]> => {
     try {
+        let whereClause = {};
+
+        if (searchTerm && searchTerm.trim() !== '') {
+            whereClause = {
+                OR: [
+                    { name: { contains: searchTerm, mode: 'insensitive' } },
+                    { symbol: { contains: searchTerm, mode: 'insensitive' } },
+                    { description: { contains: searchTerm, mode: 'insensitive' } }
+                ]
+            };
+        }
+
         const memecoins = await prisma.memecoin.findMany({
+            where: whereClause,
             orderBy: {createdAt: "desc"}
         });
 

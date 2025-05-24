@@ -1,14 +1,20 @@
 import {getMemecoins} from "@/lib/memecoin.actions";
 import MemecoinItem from "@/components/memecoins/MemecoinItem.client";
 
-export async function MemecoinList() {
-    const coins = await getMemecoins();
+export async function MemecoinList({ searchQuery }: { searchQuery?: string }) {
+    const coins = await getMemecoins(searchQuery);
 
     return (
         <div className="flex flex-col gap-3">
-            {coins.map((coin) => (
-                <MemecoinItem coin={coin} key={coin.id}/>
-            ))}
+            {coins.length > 0 ? (
+                coins.map((coin) => (
+                    <MemecoinItem coin={coin} key={coin.id}/>
+                ))
+            ) : (
+                <div className="text-center py-8">
+                    <p className="text-muted-foreground">Aucun memecoin trouvé</p>
+                </div>
+            )}
         </div>
     );
 }

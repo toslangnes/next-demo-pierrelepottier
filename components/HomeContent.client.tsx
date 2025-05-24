@@ -52,7 +52,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.6 }}
         >
-          <Button asChild size="lg" className="rounded-full px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-cyan-500 border-0 shadow-lg transition-transform hover:from-indigo-700 hover:to-cyan-600">
+          <Button asChild size="lg" className="rounded-full px-8 py-6 text-lg bg-gradient-to-r from-indigo-600 to-cyan-500 border-0 shadow-lg hover:from-indigo-700 hover:to-cyan-600">
             <Link href="/memecoins" className="flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8"></circle>
@@ -101,7 +101,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
               animate={{ opacity: 1 }}
               transition={{ duration: 0.3, delay: 1.5 }}
             >
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              <div>
                 <Button asChild variant="default" className="flex items-center gap-2">
                   <Link href="/portfolio">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -111,8 +111,8 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
                     Mon Portfolio
                   </Link>
                 </Button>
-              </motion.div>
-              <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+              </div>
+              <div>
                 <Button asChild variant="outline" className="flex items-center gap-2">
                   <Link href="/memecoins">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -121,7 +121,7 @@ export default function HomeContent({ memecoins, isLoggedIn = false, userName = 
                     Trader
                   </Link>
                 </Button>
-              </motion.div>
+              </div>
             </motion.div>
           </motion.div>
         </motion.section>
