@@ -4,8 +4,9 @@ import type {Metadata} from "next";
 import MemecoinTrading from "@/components/memecoins/MemecoinTrading.client";
 import MemecoinImage from "@/components/memecoins/MemecoinImage.client";
 import {auth} from "@/app/auth";
-import {prisma} from "@/lib/prisma";
 import {Separator} from "@/components/ui/separator";
+import {getUserProfile} from "@/lib/actions/user.actions";
+import {getUserTransactions} from "@/lib/actions/trading.actions";
 
 type PageProps = {
     params: Promise<{ id: string }>;
@@ -43,21 +44,12 @@ export default async function MemecoinDetails({params}: PageProps) {
     let userHoldings = 0;
 
     if (session?.user?.id) {
-        const user = await prisma.user.findUnique({
-            where: {id: session.user.id},
-            select: {zthBalance: true}
-        });
-
+        const user = await getUserProfile(session.user.id);
         if (user) {
             userBalance = user.zthBalance;
         }
 
-        const userTransactions = await prisma.transaction.findMany({
-            where: {
-                userId: session.user.id,
-                memecoinId: id
-            }
-        });
+        const userTransactions = await getUserTransactions(session.user.id, id);
 
         for (const tx of userTransactions) {
             if (tx.type === "BUY" && tx.quantity) {

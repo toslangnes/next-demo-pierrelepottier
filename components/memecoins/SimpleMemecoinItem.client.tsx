@@ -9,7 +9,6 @@ export default function SimpleMemecoinItem({coin}: { coin: Memecoin }) {
     return (
         <div className="w-full bg-gradient-to-br from-white to-indigo-50 rounded-lg border border-indigo-100 shadow-sm hover:shadow-md p-4">
             <div className="flex items-center gap-4">
-                {/* Left section - Logo */}
                 <div className="flex-shrink-0">
                     <MemecoinImage
                         logoUrl={coin.logoUrl}
@@ -18,7 +17,6 @@ export default function SimpleMemecoinItem({coin}: { coin: Memecoin }) {
                     />
                 </div>
 
-                {/* Middle section - Name and symbol only */}
                 <div className="flex-grow min-w-0">
                     <div className="flex flex-col">
                         <h3 className="font-semibold text-lg truncate text-gray-800">{coin.name}</h3>
@@ -26,13 +24,11 @@ export default function SimpleMemecoinItem({coin}: { coin: Memecoin }) {
                     </div>
                 </div>
 
-                {/* Right section - Price only */}
                 <div className="flex-shrink-0 text-right">
                     <p className="text-lg font-bold text-indigo-600">{coin.price.toFixed(4)} ZTH</p>
                 </div>
             </div>
 
-            {/* Button below */}
             <div className="mt-4">
                 <Button asChild variant="default" className="text-white bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-700 hover:to-indigo-600 w-full shadow-sm">
                     <Link href={`/memecoins/${coin.id}`}>

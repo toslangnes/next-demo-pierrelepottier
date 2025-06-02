@@ -10,7 +10,6 @@ export default function MemecoinItem({coin}: { coin: Memecoin }) {
     return (
         <div className="w-full bg-white rounded-lg border border-gray-100 shadow-sm p-4">
             <div className="flex items-center gap-4">
-                {/* Left section - Logo */}
                 <div className="flex-shrink-0">
                     <MemecoinImage
                         logoUrl={coin.logoUrl}
@@ -19,7 +18,6 @@ export default function MemecoinItem({coin}: { coin: Memecoin }) {
                     />
                 </div>
 
-                {/* Middle section - Name and basic info */}
                 <div className="flex-grow min-w-0">
                     <div className="flex items-center gap-2">
                         <Link href={`/memecoins/${coin.id}`} className="hover:underline">
@@ -28,7 +26,6 @@ export default function MemecoinItem({coin}: { coin: Memecoin }) {
                         <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-0.5 rounded-full">{coin.symbol}</span>
                     </div>
 
-                    {/* Simplified stats - just 2 key metrics */}
                     <div className="flex gap-4 mt-2">
                         <div className="flex items-center gap-1">
                             <Coins className="h-4 w-4 text-indigo-500" />
@@ -41,7 +38,6 @@ export default function MemecoinItem({coin}: { coin: Memecoin }) {
                     </div>
                 </div>
 
-                {/* Right section - Price and action */}
                 <div className="flex flex-col items-end gap-3 flex-shrink-0">
                     <div className="text-right">
                         <p className="text-lg font-bold text-indigo-600">{coin.price.toFixed(4)} ZTH</p>

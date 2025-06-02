@@ -1,24 +1,11 @@
-import {prisma} from "@/lib/prisma";
 import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
 import {Trophy, Coins} from "lucide-react";
+import {getLeaderboardUsers} from "@/lib/actions/user.actions";
 
 export const dynamic = "force-dynamic";
 
 export default async function LeaderboardPage() {
-    const users = await prisma.user.findMany({
-        orderBy: {zthBalance: "desc"},
-        select: {
-            id: true,
-            name: true,
-            zthBalance: true,
-            memecoins: {
-                select: {id: true}
-            },
-            transactions: {
-                select: {id: true}
-            }
-        }
-    });
+    const users = await getLeaderboardUsers();
 
     return (
         <div className="space-y-8">

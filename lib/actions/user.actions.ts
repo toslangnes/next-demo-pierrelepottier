@@ -6,6 +6,49 @@ import {auth} from "@/app/auth";
 import {z} from "zod";
 import * as bcrypt from 'bcryptjs';
 import {updateProfileSchema} from "@/lib/types/user.types";
+import {cache} from "react";
+
+export const getLeaderboardUsers = cache(async () => {
+    try {
+        const users = await prisma.user.findMany({
+            orderBy: {zthBalance: "desc"},
+            select: {
+                id: true,
+                name: true,
+                zthBalance: true,
+                memecoins: {
+                    select: {id: true}
+                },
+                transactions: {
+                    select: {id: true}
+                }
+            }
+        });
+
+        return users;
+    } catch (error) {
+        console.error("Error fetching leaderboard users:", error);
+        throw new Error("Failed to fetch leaderboard users. Please try again.");
+    }
+});
+
+export const getUserProfile = cache(async (userId: string, fullProfile: boolean = false) => {
+    try {
+        const user = await prisma.user.findUnique({
+            where: {id: userId},
+            ...(fullProfile ? {} : { select: {zthBalance: true} })
+        });
+
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        return user;
+    } catch (error) {
+        console.error("Error fetching user profile:", error);
+        throw new Error("Failed to fetch user profile. Please try again.");
+    }
+});
 
 export async function updateProfile(
     _prev: unknown,

@@ -8,6 +8,52 @@ import {prisma} from "@/lib/prisma";
 import "server-only";
 import {auth} from "@/app/auth";
 
+export const getUserCreatedMemecoins = cache(async (userId: string): Promise<Memecoin[]> => {
+    try {
+        const memecoins = await prisma.memecoin.findMany({
+            where: {userId: userId},
+            orderBy: {createdAt: "desc"}
+        });
+
+        return memecoins;
+    } catch (error: unknown) {
+        console.error("Error fetching user created memecoins:", error);
+        throw new Error("Failed to fetch user created memecoins. Please try again.");
+    }
+});
+
+export const getUserPurchasedMemecoins = cache(async (userId: string, createdMemecoinIds: string[]): Promise<Memecoin[]> => {
+    try {
+        const transactions = await prisma.transaction.findMany({
+            where: {
+                userId: userId,
+                type: "BUY",
+                NOT: {memecoinId: null}
+            },
+            include: {memecoin: true}
+        });
+
+        const purchasedMemecoinIds = new Set<string>();
+        transactions.forEach(tx => {
+            if (tx.memecoinId && !createdMemecoinIds.includes(tx.memecoinId)) {
+                purchasedMemecoinIds.add(tx.memecoinId);
+            }
+        });
+
+        const purchasedMemecoins = await prisma.memecoin.findMany({
+            where: {
+                id: {in: Array.from(purchasedMemecoinIds)}
+            },
+            orderBy: {updatedAt: "desc"}
+        });
+
+        return purchasedMemecoins;
+    } catch (error: unknown) {
+        console.error("Error fetching user purchased memecoins:", error);
+        throw new Error("Failed to fetch user purchased memecoins. Please try again.");
+    }
+});
+
 export const getMemecoins = cache(async (searchTerm?: string): Promise<Memecoin[]> => {
     try {
         let whereClause = {};

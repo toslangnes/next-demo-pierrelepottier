@@ -52,7 +52,6 @@ export default function LoginPage() {
                 }),
             });
 
-            // Handle server errors (500) explicitly
             if (response.status === 500) {
                 setError("Invalid email or password. Please try again.");
                 setIsLoading(false);

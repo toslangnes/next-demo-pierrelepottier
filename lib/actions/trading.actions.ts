@@ -11,6 +11,35 @@ import {
     tradeSchema,
     TradeResponse
 } from "@/lib/types/trading.types";
+import {cache} from "react";
+
+export const getUserTransactions = cache(async (userId: string, memecoinId?: string) => {
+    try {
+        const whereClause: {
+            userId: string;
+            memecoinId?: string;
+        } = { userId };
+
+        if (memecoinId) {
+            whereClause.memecoinId = memecoinId;
+        }
+
+        const transactions = await prisma.transaction.findMany({
+            where: whereClause,
+            include: {
+                memecoin: true
+            },
+            orderBy: {
+                createdAt: "desc"
+            }
+        });
+
+        return transactions;
+    } catch (error) {
+        console.error("Error fetching user transactions:", error);
+        throw new Error("Failed to fetch user transactions. Please try again.");
+    }
+});
 
 export async function buyMemecoin(
     _prev: unknown,

@@ -1,12 +1,13 @@
 import {auth} from "@/app/auth";
 import {redirect} from "next/navigation";
-import {prisma} from "@/lib/prisma";
 import {Tabs, TabsContent, TabsList, TabsTrigger} from "@/components/ui/tabs";
 import {Card, CardContent} from "@/components/ui/card";
 import MemecoinItem from "@/components/memecoins/MemecoinItem.client";
 import {Wallet, PlusCircle, User} from "lucide-react";
 import Link from "next/link";
 import {Button} from "@/components/ui/button";
+import {getUserCreatedMemecoins, getUserPurchasedMemecoins} from "@/lib/actions/memecoin.actions";
+import {getUserProfile} from "@/lib/actions/user.actions";
 
 export const dynamic = "force-dynamic";
 
@@ -17,38 +18,15 @@ export default async function PortfolioPage() {
         redirect("/login");
     }
 
-    const createdMemecoins = await prisma.memecoin.findMany({
-        where: {userId: session.user.id},
-        orderBy: {createdAt: "desc"}
-    });
+    const userId = session.user.id;
 
-    const transactions = await prisma.transaction.findMany({
-        where: {
-            userId: session.user.id,
-            type: "BUY",
-            NOT: {memecoinId: null}
-        },
-        include: {memecoin: true}
-    });
+    const createdMemecoins = await getUserCreatedMemecoins(userId);
 
-    const purchasedMemecoinIds = new Set();
-    transactions.forEach(tx => {
-        if (tx.memecoinId && !createdMemecoins.some(coin => coin.id === tx.memecoinId)) {
-            purchasedMemecoinIds.add(tx.memecoinId);
-        }
-    });
+    const createdMemecoinIds = createdMemecoins.map(coin => coin.id);
 
-    const purchasedMemecoins = await prisma.memecoin.findMany({
-        where: {
-            id: {in: Array.from(purchasedMemecoinIds) as string[]}
-        },
-        orderBy: {updatedAt: "desc"}
-    });
+    const purchasedMemecoins = await getUserPurchasedMemecoins(userId, createdMemecoinIds);
 
-    const user = await prisma.user.findUnique({
-        where: {id: session.user.id},
-        select: {zthBalance: true}
-    });
+    const user = await getUserProfile(userId);
 
     return (
         <div className="space-y-8">

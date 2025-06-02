@@ -1,8 +1,8 @@
 import {auth} from "@/app/auth";
 import {redirect} from "next/navigation";
-import {prisma} from "@/lib/prisma";
 import {ProfileForm} from "@/components/profile/ProfileForm";
 import {Settings} from "lucide-react";
+import {getUserProfile} from "@/lib/actions/user.actions";
 
 export const dynamic = "force-dynamic";
 
@@ -13,9 +13,7 @@ export default async function ProfilePage() {
         redirect("/login");
     }
 
-    const user = await prisma.user.findUnique({
-        where: {id: session.user.id},
-    });
+    const user = await getUserProfile(session.user.id, true);
 
     if (!user) {
         redirect("/login");

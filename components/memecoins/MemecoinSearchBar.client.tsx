@@ -12,7 +12,6 @@ export default function MemecoinSearchBar() {
   const [searchQuery, setSearchQuery] = useState(initialQuery);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-  // Custom debounce implementation
   const updateSearchParams = useCallback((query: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
@@ -25,23 +24,19 @@ export default function MemecoinSearchBar() {
     router.push(`/memecoins?${params.toString()}`);
   }, [searchParams, router]);
 
-  // Update search when input changes
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const query = e.target.value;
     setSearchQuery(query);
 
-    // Clear any existing timeout
     if (timeoutRef.current) {
       clearTimeout(timeoutRef.current);
     }
 
-    // Set a new timeout
     timeoutRef.current = setTimeout(() => {
       updateSearchParams(query);
     }, 300);
   };
 
-  // Clean up timeout on unmount
   useEffect(() => {
     return () => {
       if (timeoutRef.current) {
@@ -50,7 +45,6 @@ export default function MemecoinSearchBar() {
     };
   }, []);
 
-  // Sync state with URL params on mount and when URL changes
   useEffect(() => {
     setSearchQuery(initialQuery);
   }, [initialQuery]);
