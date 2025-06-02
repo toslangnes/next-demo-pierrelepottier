@@ -33,6 +33,7 @@ export default function LoginPage() {
             email: "",
             password: "",
         },
+        mode: "onSubmit",
     });
 
     const onSubmit = async (data: LoginFormValues) => {
@@ -51,6 +52,13 @@ export default function LoginPage() {
                 }),
             });
 
+            // Handle server errors (500) explicitly
+            if (response.status === 500) {
+                setError("Invalid email or password. Please try again.");
+                setIsLoading(false);
+                return;
+            }
+
             const result = await response.json();
 
             if (response.ok) {
@@ -60,7 +68,7 @@ export default function LoginPage() {
                 setError(result.error || "Invalid email or password. Please try again.");
             }
         } catch (error) {
-            setError("An error occurred. Please try again.");
+            setError("Invalid email or password. Please try again.");
             console.error("Login error:", error);
         } finally {
             setIsLoading(false);
@@ -83,7 +91,7 @@ export default function LoginPage() {
                                 <Label htmlFor="email">Email</Label>
                                 <Input
                                     id="email"
-                                    type="email"
+                                    type="text"
                                     placeholder="Enter your email"
                                     {...register("email")}
                                     disabled={isLoading}
